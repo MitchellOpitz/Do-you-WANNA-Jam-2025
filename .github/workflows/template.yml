@@ -1,0 +1,83 @@
+name: GodotCI Template 🎮
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - feat/ci-cd
+
+jobs:         
+  buildWeb:
+    name: Build for Web 🖥️
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Godot
+        uses: firebelley/godot-export@v5.2.1
+        with:
+          godot_executable_download_url: "https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip"
+          godot_export_templates_download_url: "https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz"
+          relative_project_path: "."
+          archive_output: true
+          cache: false
+
+      - name: Create build directory
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/build/Web
+          chmod -R 777 $GITHUB_WORKSPACE/build
+
+      - name: Build project
+        env:
+          TMPDIR: $GITHUB_WORKSPACE/build/tmp
+        run: |
+          mkdir -p $TMPDIR
+          $HOME/.local/share/godot/godot_executable/Godot_v4.3-stable_linux.x86_64 --headless --export-release "Web" "$GITHUB_WORKSPACE/build/Web/index.html"
+
+      - name: Verify Export Output
+        run: |
+          echo "Contents of build directory:"
+          ls -R $GITHUB_WORKSPACE/build/Web || echo "Directory is empty or missing."
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-Web
+          path: build/Web
+         
+  deployItch:
+    needs: buildWeb
+    name: Deploy to Itch.io 🚀
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Web Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-Web
+          path: build/Web  # Ensure the path matches
+
+      - name: Check Build Directory
+        run: |
+          if [ ! -d "build/Web" ]; then
+            echo "Error: build/Web directory not found!"
+            exit 1
+          fi
+          echo "Build directory structure:"
+          ls -R build/Web
+
+      - name: Deploy 🚀
+        uses: manleydev/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_IO_API_KEY }}
+          CHANNEL: HTML
+          ITCH_GAME: do-you-wanna-jam-2025
+          ITCH_USER: brainfartstudio
+          BRANCH: itch-io
+          PACKAGE: build/Web

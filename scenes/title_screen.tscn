@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://chgieot0qbd11"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1166.0
+offset_bottom = 655.0
+color = Color(0, 0, 0.235294, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_right = 1152.0
+offset_bottom = 331.0
+text = "Title
+Screen"
+horizontal_alignment = 1
+vertical_alignment = 1

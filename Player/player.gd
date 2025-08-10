@@ -1,13 +1,14 @@
 # class_name makes Player available for type checking.
 class_name Player extends CharacterBody3D
 
-
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 
 @export var look_sensitivity : float = 0.5
 @export var max_y_look : float = -90.0
 @export var min_y_look : float = 45.0
+
+var inventory : Dictionary
 
 # functions with a leading underscore are virtual methods called by the engine.
 func _ready() -> void:
@@ -55,3 +56,6 @@ func _physics_process(delta: float) -> void:
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	move_and_slide()
+	
+	# Things not related to movement
+	$DebugInventory.text = str(inventory)

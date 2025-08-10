@@ -1,12 +1,20 @@
 class_name EventArea extends Node3D
 
+@export var use_timer : bool = true
+@export var event_name : String
+
 var player_in_area : bool = false
 var holding_interact : bool = false
-
 var active_tween : Tween
+
+signal completed_interaction(event_name : String)
 
 func _input(event: InputEvent) -> void:
 	if player_in_area and event.is_action_pressed("interact") and not holding_interact:
+		if not use_timer:
+			# signal game manager to resolve event.
+			completed_interaction.emit(event_name)
+			return
 		holding_interact = true
 		$CompletionTimer.start()
 		var completion_tween = create_tween()
@@ -38,4 +46,9 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 
 func _on_completion_timer_timeout() -> void:
 	# very temporary. Remove self after completing interaction
+	completed_interaction.emit(event_name)
 	self.queue_free()
+
+
+func check_requirements(required_items : Array, items_given : Array) -> void:
+	pass

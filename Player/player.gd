@@ -1,4 +1,5 @@
-extends CharacterBody3D
+# class_name makes Player available for type checking.
+class_name Player extends CharacterBody3D
 
 
 const SPEED = 5.0

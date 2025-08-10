@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://rqpkgkt0ab7m"]
+[gd_scene load_steps=9 format=3 uid="uid://rqpkgkt0ab7m"]
 
 [ext_resource type="PackedScene" uid="uid://b6dxse7cc00s7" path="res://Player/player.tscn" id="1_3xt83"]
+[ext_resource type="PackedScene" uid="uid://dtjvu7wxx0uyv" path="res://scenes/event_area.tscn" id="2_slnt2"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qfu3t"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -15,7 +16,7 @@ sky = SubResource("Sky_ake08")
 tonemap_mode = 2
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7is7r"]
-size = Vector2(10, 10)
+size = Vector2(25, 25)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pr81g"]
 albedo_color = Color(0.39, 0.1365, 0, 1)
@@ -44,3 +45,11 @@ mesh = SubResource("BoxMesh_dnee4")
 
 [node name="Player" parent="." instance=ExtResource("1_3xt83")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Events" type="Node3D" parent="."]
+
+[node name="EventArea" parent="Events" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 0)
+
+[node name="EventArea2" parent="Events" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, 0)

@@ -65,8 +65,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -4)
 use_timer = false
 event_name = "fabric"
 
-[node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+[node name="Damage" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -4)
+event_name = "damage"
+event_requirements = {
+"patch_resource": 1
+}
+
+[node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 0)
 event_name = "patch"
 event_requirements = {
 "fabric_resource": 1,
@@ -77,4 +84,5 @@ event_requirements = {
 [connection signal="completed_interaction" from="ResourceEvents/Honey" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Gum" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Fabric" to="." method="_on_event_completed"]
+[connection signal="completed_interaction" from="ResourceEvents/Damage" to="." method="_on_damage_completed_interaction"]
 [connection signal="completed_interaction" from="ResourceEvents/Patch" to="." method="_on_event_completed"]

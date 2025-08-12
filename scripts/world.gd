@@ -1,22 +1,28 @@
 extends Node3D
 
-# format is item_name (same as event_name) : {max_item, item_ref : resource or node3d, but is a string for now}
+# format is event_name : {max_quantity : int, item_ref : resource or node3d, but is a string for now
+# (optional, not used yet but might be nice for instantiating.) requirements : {x_resource : int}}
 var item_dicts : Dictionary = {
 	"honey" : {"max_quantity" : 3, "item_reference" : "honey_resource"},
 	"gum" : {"max_quantity" : 5, "item_reference" : "gum_resource"},
 	"fabric" : {"max_quantity" : 1, "item_reference" : "fabric_resource"},
-	"patch" : {"max_quantity" : 1, "item_reference" : "patch_resource"},
+	"patch" : {"max_quantity" : 1, "item_reference" : "patch_resource", "requirements": {
+		"fabric_resource" : 1, "gum_resource" : 3, "honey_resource" : 2}},
 }
 
 func _ready() -> void:
 	test_events()
 
 
-func _on_event_completed(event_name : String) -> void:
+func _on_event_completed(event_name : String, current_event : EventArea) -> void:
 	var player_inventory : Dictionary = $Player.inventory
 	var item_count = player_inventory.get_or_add(item_dicts[event_name].item_reference, 0)
 	var new_item_count = min(item_count + 1, item_dicts[event_name]["max_quantity"])
 	player_inventory[item_dicts[event_name].item_reference] = new_item_count
+
+
+func _on_damage_completed_interaction(event_name: String, current_event : EventArea) -> void:
+	current_event.queue_free()
 
 
 func test_events():

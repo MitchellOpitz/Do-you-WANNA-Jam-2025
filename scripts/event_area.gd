@@ -2,6 +2,7 @@ class_name EventArea extends Node3D
 
 @export var use_timer : bool = true
 @export var event_name : String
+@export var event_requirements : Dictionary
 
 var player_in_area : bool = false
 var holding_interact : bool = false
@@ -9,17 +10,29 @@ var active_tween : Tween
 
 signal completed_interaction(event_name : String)
 
+func _ready() -> void:
+	self.add_to_group("Events")
+
 func _input(event: InputEvent) -> void:
+	# if this is the first frame we've pushed interact:
 	if player_in_area and event.is_action_pressed("interact") and not holding_interact:
+		var player_inventory : Dictionary
+		for b in $Area3D.get_overlapping_bodies():
+			if b is Player:
+				player_inventory = b.inventory
+				break
 		if not use_timer:
-			# signal game manager to resolve event.
-			completed_interaction.emit(event_name)
+			if check_requirements(event_requirements, player_inventory):
+				completed_interaction.emit(event_name)
 			return
-		holding_interact = true
-		$CompletionTimer.start()
+		# get reference to player inventory.
+		check_requirements(event_requirements, player_inventory)
 		var completion_tween = create_tween()
 		active_tween = completion_tween
 		active_tween.tween_property($Sprite3D, "modulate", Color("000000"), $CompletionTimer.wait_time)
+		holding_interact = true
+		$CompletionTimer.start()
+		
 	if player_in_area and event.is_action_released("interact") and holding_interact:
 		holding_interact = false
 		$CompletionTimer.stop()
@@ -50,5 +63,12 @@ func _on_completion_timer_timeout() -> void:
 	self.queue_free()
 
 
-func check_requirements(required_items : Array, items_given : Array) -> void:
-	pass
+func check_requirements(required_items : Dictionary, items_given : Dictionary) -> bool:
+	print("comparing ", required_items, " to ", items_given)
+	if required_items.is_empty(): return true
+	for k in required_items.keys():
+		var player_item_count = items_given.get(k)
+		if not player_item_count or required_items[k] > player_item_count:
+			return false
+	return true
+	

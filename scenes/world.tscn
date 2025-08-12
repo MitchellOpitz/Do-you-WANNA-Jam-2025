@@ -48,14 +48,33 @@ mesh = SubResource("BoxMesh_dnee4")
 [node name="Player" parent="." instance=ExtResource("1_3xt83")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="Events" type="Node3D" parent="."]
+[node name="ResourceEvents" type="Node3D" parent="."]
 
-[node name="EventArea" parent="Events" instance=ExtResource("2_slnt2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 0)
+[node name="Honey" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
 use_timer = false
 event_name = "honey"
 
-[node name="EventArea2" parent="Events" instance=ExtResource("2_slnt2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, 0)
+[node name="Gum" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 4)
+use_timer = false
+event_name = "gum"
 
-[connection signal="completed_interaction" from="Events/EventArea" to="." method="_on_event_completed"]
+[node name="Fabric" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -4)
+use_timer = false
+event_name = "fabric"
+
+[node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -4)
+event_name = "patch"
+event_requirements = {
+"fabric_resource": 1,
+"gum_resource": 3,
+"honey_resource": 2
+}
+
+[connection signal="completed_interaction" from="ResourceEvents/Honey" to="." method="_on_event_completed"]
+[connection signal="completed_interaction" from="ResourceEvents/Gum" to="." method="_on_event_completed"]
+[connection signal="completed_interaction" from="ResourceEvents/Fabric" to="." method="_on_event_completed"]
+[connection signal="completed_interaction" from="ResourceEvents/Patch" to="." method="_on_event_completed"]

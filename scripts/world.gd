@@ -12,6 +12,7 @@ var item_dicts : Dictionary = {
 
 func _ready() -> void:
 	test_events()
+	prepare_loading()
 
 
 func _on_event_completed(event_name : String, current_event : EventArea) -> void:
@@ -42,3 +43,7 @@ func test_events():
 					for key in c.event_requirements.keys():
 						if c.event_requirements[key] == 0:
 							push_warning(str(c.get_path()) + " " + key + " requires 0. Double check this.")
+
+
+func prepare_loading() -> void:
+	Global.load_particles($LoadingScreen/VBoxContainer/Label, $LoadingScreen/VBoxContainer/ProgressBar)

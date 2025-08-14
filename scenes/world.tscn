@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://rqpkgkt0ab7m"]
+[gd_scene load_steps=13 format=3 uid="uid://rqpkgkt0ab7m"]
 
 [ext_resource type="PackedScene" uid="uid://b6dxse7cc00s7" path="res://Player/player.tscn" id="1_3xt83"]
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_um00t"]
@@ -24,6 +24,22 @@ albedo_color = Color(0.39, 0.1365, 0, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_dnee4"]
 size = Vector3(1, 2, 10)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qdiqf"]
+angle_min = 1.07288e-05
+angle_max = 1.07288e-05
+direction = Vector3(0, 1, 0)
+spread = 25.0
+flatness = 0.25
+initial_velocity_min = 3.0
+initial_velocity_max = 5.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w88vm"]
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_tt0et"]
+material = SubResource("StandardMaterial3D_w88vm")
+size = Vector2(0.25, 0.25)
 
 [node name="World" type="Node3D"]
 script = ExtResource("1_um00t")
@@ -55,6 +71,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
 use_timer = false
 event_name = "honey"
 
+[node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Honey" groups=["particles"]]
+emitting = false
+amount = 25
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_qdiqf")
+draw_pass_1 = SubResource("QuadMesh_tt0et")
+
 [node name="Gum" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 4)
 use_timer = false
@@ -72,6 +96,11 @@ event_requirements = {
 "patch_resource": 1
 }
 
+[node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Damage" groups=["particles"]]
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_qdiqf")
+draw_pass_1 = SubResource("QuadMesh_tt0et")
+
 [node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 0)
 event_name = "patch"
@@ -80,6 +109,41 @@ event_requirements = {
 "gum_resource": 3,
 "honey_resource": 2
 }
+
+[node name="LoadingScreen" type="CanvasLayer" parent="."]
+
+[node name="Background" type="ColorRect" parent="LoadingScreen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0.235294, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoadingScreen"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -74.5
+offset_top = -27.0
+offset_right = 74.5
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="LoadingScreen/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+text = "Loading Particles... "
+
+[node name="ProgressBar" type="ProgressBar" parent="LoadingScreen/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+step = 1.0
 
 [connection signal="completed_interaction" from="ResourceEvents/Honey" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Gum" to="." method="_on_event_completed"]

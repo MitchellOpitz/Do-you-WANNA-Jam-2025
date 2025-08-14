@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=3 uid="uid://dcdf81eayjyro"]
+
+[ext_resource type="Script" path="res://scripts/options.gd" id="1_1cv0g"]
+[ext_resource type="PackedScene" uid="uid://cmnjedqmptyeh" path="res://scenes/audio_slider.tscn" id="2_c0v11"]
+
+[node name="Options" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1cv0g")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0.235294, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 100
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Menu" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 50
+text = "RETURN TO MENU"
+
+[node name="Music" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 50
+text = "Music"
+
+[node name="MSlider" parent="MarginContainer/VBoxContainer" instance=ExtResource("2_c0v11")]
+layout_mode = 2
+size_flags_vertical = 3
+script = null
+
+[node name="SFX" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 50
+text = "SFX"
+
+[node name="SSlider" parent="MarginContainer/VBoxContainer" instance=ExtResource("2_c0v11")]
+layout_mode = 2
+size_flags_vertical = 3
+script = null
+
+[node name="Dialogue" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 50
+text = "Dialogue"
+
+[node name="DSlider" parent="MarginContainer/VBoxContainer" instance=ExtResource("2_c0v11")]
+layout_mode = 2
+size_flags_vertical = 3
+script = null
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Menu" to="." method="_on_menu_pressed"]

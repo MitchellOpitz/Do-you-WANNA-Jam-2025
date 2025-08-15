@@ -12,17 +12,22 @@ var item_dicts : Dictionary = {
 
 func _ready() -> void:
 	test_events()
-	prepare_loading()
+	# Load particles and then kill em.
+	for c : GPUParticles3D in $ParticlesToLoad.get_children():
+		c.emitting = true
+
+	# It's important to copy any particle created to this node to properly take advantage of loading.
+	$ParticlesToLoad.queue_free()
 
 
-func _on_event_completed(event_name : String, current_event : EventArea) -> void:
+func _on_event_completed(event_name : String, _current_event : EventArea) -> void:
 	var player_inventory : Dictionary = $Player.inventory
 	var item_count = player_inventory.get_or_add(item_dicts[event_name].item_reference, 0)
 	var new_item_count = min(item_count + 1, item_dicts[event_name]["max_quantity"])
 	player_inventory[item_dicts[event_name].item_reference] = new_item_count
 
 
-func _on_damage_completed_interaction(event_name: String, current_event : EventArea) -> void:
+func _on_damage_completed_interaction(_event_name: String, current_event : EventArea) -> void:
 	current_event.queue_free()
 
 
@@ -43,7 +48,3 @@ func test_events():
 					for key in c.event_requirements.keys():
 						if c.event_requirements[key] == 0:
 							push_warning(str(c.get_path()) + " " + key + " requires 0. Double check this.")
-
-
-func prepare_loading() -> void:
-	Global.load_particles($LoadingScreen/VBoxContainer/Label, $LoadingScreen/VBoxContainer/ProgressBar)

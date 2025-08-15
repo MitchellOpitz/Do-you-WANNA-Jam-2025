@@ -30,6 +30,9 @@ func _input(event: InputEvent) -> void:
 
 		if not use_timer:
 			completed_interaction.emit(event_name, self)
+			# Emit particles if they exist.
+			if self.get_child_count() and self.get_child(0) is GPUParticles3D:
+				self.get_child(0).emitting = true
 			# Deduct items for successful comparison
 			for k in event_requirements.keys():
 				player_inventory[k] -= event_requirements[k]
@@ -70,6 +73,9 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 
 func _on_completion_timer_timeout() -> void:
 	completed_interaction.emit(event_name, self)
+	# Emit particles if they exist.
+	if self.get_child_count() and self.get_child(0) is GPUParticles3D:
+		self.get_child(0).emitting = true
 	for k in event_requirements.keys():
 		player_inventory[k] -= event_requirements[k]
 	

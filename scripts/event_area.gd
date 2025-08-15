@@ -1,8 +1,6 @@
 class_name EventArea extends Node3D
 
-@export var use_timer : bool = true
-@export var event_name : String
-@export var event_requirements : Dictionary
+@export var event_data : EventResource
 
 var player_in_area : bool = false
 var player_inventory : Dictionary
@@ -13,7 +11,10 @@ signal completed_interaction(event_name : String, current_event : EventArea)
 
 func _ready() -> void:
 	self.add_to_group("Events")
-	$Info.text = event_name
+
+	# Prepare resources
+	$Sprite3D.texture = event_data.world_sprite
+	$Info.text = event_data.event_name
 
 
 func _input(event: InputEvent) -> void:
@@ -25,17 +26,17 @@ func _input(event: InputEvent) -> void:
 				break
 
 		# don't complete event if requirements not met.
-		if not check_requirements(event_requirements, player_inventory): 
+		if not check_requirements(event_data.event_requirements, player_inventory): 
 			return
 
-		if not use_timer:
-			completed_interaction.emit(event_name, self)
+		if not event_data.use_timer:
+			completed_interaction.emit(event_data.event_name, self)
 			# Emit particles if they exist.
 			if self.get_child_count() and self.get_child(0) is GPUParticles3D:
 				self.get_child(0).emitting = true
 			# Deduct items for successful comparison
-			for k in event_requirements.keys():
-				player_inventory[k] -= event_requirements[k]
+			for k in event_data.event_requirements.keys():
+				player_inventory[k] -= event_data.event_requirements[k]
 			return
 
 		var completion_tween = create_tween()
@@ -72,12 +73,12 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 
 
 func _on_completion_timer_timeout() -> void:
-	completed_interaction.emit(event_name, self)
+	completed_interaction.emit(event_data.event_name, self)
 	# Emit particles if they exist.
 	if self.get_child_count() and self.get_child(0) is GPUParticles3D:
 		self.get_child(0).emitting = true
-	for k in event_requirements.keys():
-		player_inventory[k] -= event_requirements[k]
+	for k in event_data.event_requirements.keys():
+		player_inventory[k] -= event_data.event_requirements[k]
 	
 
 
@@ -95,4 +96,8 @@ func check_requirements(required_items : Dictionary, items_given : Dictionary) -
 
 
 func _on_info_timer_timeout() -> void:
-	$Info.text = event_name
+	$Info.text = event_data.event_name
+
+
+func get_inventory_sprite() -> CompressedTexture2D:
+	return event_data.inventory_sprite

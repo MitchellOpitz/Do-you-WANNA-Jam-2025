@@ -1,8 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://rqpkgkt0ab7m"]
+[gd_scene load_steps=22 format=3 uid="uid://rqpkgkt0ab7m"]
 
 [ext_resource type="PackedScene" uid="uid://b6dxse7cc00s7" path="res://Player/player.tscn" id="1_3xt83"]
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_um00t"]
 [ext_resource type="PackedScene" uid="uid://dtjvu7wxx0uyv" path="res://scenes/event_area.tscn" id="2_slnt2"]
+[ext_resource type="Texture2D" uid="uid://tuflototupm6" path="res://Assets/TempInventory.png" id="4_aq3yf"]
+[ext_resource type="Script" path="res://scripts/EventResource.gd" id="5_csmsd"]
+[ext_resource type="Texture2D" uid="uid://b21faga74gxsr" path="res://Assets/TempBox.png" id="6_ldngi"]
+[ext_resource type="Texture2D" uid="uid://bm8tx30broix4" path="res://Assets/TempDamage.png" id="7_keyip"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qdiqf"]
 angle_min = 1.07288e-05
@@ -40,6 +44,49 @@ albedo_color = Color(0.39, 0.1365, 0, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_dnee4"]
 size = Vector3(1, 2, 10)
+
+[sub_resource type="Resource" id="Resource_bnxxg"]
+script = ExtResource("5_csmsd")
+use_timer = false
+event_name = "honey"
+event_requirements = {}
+world_sprite = ExtResource("6_ldngi")
+inventory_sprite = ExtResource("4_aq3yf")
+
+[sub_resource type="Resource" id="Resource_bndt3"]
+script = ExtResource("5_csmsd")
+use_timer = false
+event_name = "gum"
+event_requirements = {}
+world_sprite = ExtResource("6_ldngi")
+inventory_sprite = ExtResource("4_aq3yf")
+
+[sub_resource type="Resource" id="Resource_psaaj"]
+script = ExtResource("5_csmsd")
+use_timer = false
+event_name = "fabric"
+event_requirements = {}
+world_sprite = ExtResource("6_ldngi")
+inventory_sprite = ExtResource("4_aq3yf")
+
+[sub_resource type="Resource" id="Resource_pthu8"]
+script = ExtResource("5_csmsd")
+use_timer = true
+event_name = "damage"
+event_requirements = {
+"patch_resource": 1
+}
+world_sprite = ExtResource("7_keyip")
+
+[sub_resource type="Resource" id="Resource_xj02q"]
+script = ExtResource("5_csmsd")
+use_timer = true
+event_name = "patch"
+event_requirements = {
+"fabric_resource": 1,
+"gum_resource": 3,
+"honey_resource": 2
+}
 
 [node name="World" type="Node3D"]
 script = ExtResource("1_um00t")
@@ -85,8 +132,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Honey" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
-use_timer = false
-event_name = "honey"
+event_data = SubResource("Resource_bnxxg")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Honey" groups=["particles"]]
 emitting = false
@@ -98,20 +144,15 @@ draw_pass_1 = SubResource("QuadMesh_tt0et")
 
 [node name="Gum" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 4)
-use_timer = false
-event_name = "gum"
+event_data = SubResource("Resource_bndt3")
 
 [node name="Fabric" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -4)
-use_timer = false
-event_name = "fabric"
+event_data = SubResource("Resource_psaaj")
 
 [node name="Damage" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -4)
-event_name = "damage"
-event_requirements = {
-"patch_resource": 1
-}
+event_data = SubResource("Resource_pthu8")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Damage" groups=["particles"]]
 amount = 25
@@ -120,12 +161,7 @@ draw_pass_1 = SubResource("QuadMesh_tt0et")
 
 [node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 0)
-event_name = "patch"
-event_requirements = {
-"fabric_resource": 1,
-"gum_resource": 3,
-"honey_resource": 2
-}
+event_data = SubResource("Resource_xj02q")
 
 [connection signal="completed_interaction" from="ResourceEvents/Honey" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Gum" to="." method="_on_event_completed"]

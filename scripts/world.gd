@@ -37,14 +37,14 @@ func test_events():
 		if c is EventArea:
 			if not c.completed_interaction.get_connections():
 				push_warning(c.name + " completed_interaction signal is not connected to the world.gd _on_event_completed")
-			if c.event_name:
-				if c.event_name.is_empty():
+			if c.event_data.event_name:
+				if c.event_data.event_name.is_empty():
 					push_warning(c.name + " is an empty string. This could cause an error.")
-				elif c.event_name not in item_dicts:
-					push_warning(str(c.get_path()) + " " +  c.event_name + " is not a known item. Check that it has a key in world.gd item_dicts.")
-				if c.event_requirements:
-					if c.event_name in c.event_requirements:
-						push_warning(str(c.get_path()) + " " + c.event_name + " is required to get " + c.event_name + ". Make sure this can still be collected.")
-					for key in c.event_requirements.keys():
-						if c.event_requirements[key] == 0:
+				elif c.event_data.event_name not in item_dicts:
+					push_warning(str(c.get_path()) + " " +  c.event_data.event_name + " is not a known item. Check that it has a key in world.gd item_dicts.")
+				if c.event_data.event_requirements:
+					if c.event_data.event_name in c.event_data.event_requirements:
+						push_warning(str(c.get_path()) + " " + c.event_data.event_name + " is required to get " + c.event_data.event_name + ". Make sure this can still be collected.")
+					for key in c.event_data.event_requirements.keys():
+						if c.event_data.event_requirements[key] == 0:
 							push_warning(str(c.get_path()) + " " + key + " requires 0. Double check this.")

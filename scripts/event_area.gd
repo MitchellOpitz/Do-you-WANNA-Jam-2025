@@ -7,7 +7,7 @@ var player_inventory : Dictionary
 var holding_interact : bool = false
 var active_tween : Tween
 
-signal completed_interaction(event_name : String, current_event : EventArea)
+signal completed_interaction(event_data : EventResource, node_reference : EventArea)
 
 func _ready() -> void:
 	self.add_to_group("Events")
@@ -30,7 +30,7 @@ func _input(event: InputEvent) -> void:
 			return
 
 		if not event_data.use_timer:
-			completed_interaction.emit(event_data.event_name, self)
+			completed_interaction.emit(event_data, self)
 			# Emit particles if they exist.
 			if self.get_child_count() and self.get_child(0) is GPUParticles3D:
 				self.get_child(0).emitting = true
@@ -73,7 +73,7 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 
 
 func _on_completion_timer_timeout() -> void:
-	completed_interaction.emit(event_data.event_name, self)
+	completed_interaction.emit(event_data, self)
 	# Emit particles if they exist.
 	if self.get_child_count() and self.get_child(0) is GPUParticles3D:
 		self.get_child(0).emitting = true

@@ -8,12 +8,16 @@ const JUMP_VELOCITY = 4.5
 @export var max_y_look : float = -90.0
 @export var min_y_look : float = 45.0
 
+var temp_array : Array:
+	set(new_value):
+		temp_array = new_value
 var inventory : Dictionary
 var speed : float = 5.0
 var sprinting : bool = false
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	temp_array.append("hello")
 	pass
 
 func _input(event: InputEvent) -> void:
@@ -57,6 +61,20 @@ func _physics_process(delta: float) -> void:
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	move_and_slide()
-	
-	# Things not related to movement
-	$DebugInventory.text = str(inventory)
+
+
+func update_inventory(item_to_display : CompressedTexture2D) -> void:
+	for k in inventory.keys():
+		# if we have some but don't have a display.
+		var ui_texture = $UI/HBox.find_child(k, true, false)
+		if not ui_texture:
+			if not inventory[k]:
+				ui_texture.queue_free()
+			var new_texture = TextureRect.new()
+			var new_label = Label.new()
+			new_texture.texture = item_to_display
+			new_texture.name = k
+			
+			new_label.text = str(inventory[k])
+			$UI/HBox.add_child(new_texture)
+			new_texture.add_child(new_label)

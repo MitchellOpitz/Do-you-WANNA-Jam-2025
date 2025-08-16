@@ -20,6 +20,7 @@ func _on_event_completed(event_data : EventResource, _node_reference : EventArea
 
 func _on_damage_completed_interaction(_event_data : EventResource, node_reference : EventArea) -> void:
 	node_reference.queue_free()
+	$Player.update_inventory()
 
 
 func test_events():

@@ -30,13 +30,13 @@ func _input(event: InputEvent) -> void:
 			return
 
 		if not event_data.use_timer:
-			completed_interaction.emit(event_data, self)
 			# Emit particles if they exist.
-			if self.get_child_count() and self.get_child(0) is GPUParticles3D:
-				self.get_child(0).emitting = true
+			if self.get_child_count() and self.get_child(-1) is GPUParticles3D:
+				self.get_child(-1).emitting = true
 			# Deduct items for successful comparison
 			for k in event_data.event_requirements.keys():
 				player_inventory[k] -= event_data.event_requirements[k]
+			completed_interaction.emit(event_data, self)
 			return
 
 		var completion_tween = create_tween()
@@ -73,13 +73,12 @@ func _on_area_3d_body_exited(body: Node3D) -> void:
 
 
 func _on_completion_timer_timeout() -> void:
-	completed_interaction.emit(event_data, self)
 	# Emit particles if they exist.
-	if self.get_child_count() and self.get_child(0) is GPUParticles3D:
-		self.get_child(0).emitting = true
+	if self.get_child_count() and self.get_child(-1) is GPUParticles3D:
+		self.get_child(-1).emitting = true
 	for k in event_data.event_requirements.keys():
 		player_inventory[k] -= event_data.event_requirements[k]
-	
+	completed_interaction.emit(event_data, self)
 
 
 func check_requirements(required_items : Dictionary, items_given : Dictionary) -> bool:

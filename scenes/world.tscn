@@ -1,8 +1,29 @@
-[gd_scene load_steps=10 format=3 uid="uid://rqpkgkt0ab7m"]
+[gd_scene load_steps=18 format=3 uid="uid://rqpkgkt0ab7m"]
 
 [ext_resource type="PackedScene" uid="uid://b6dxse7cc00s7" path="res://Player/player.tscn" id="1_3xt83"]
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_um00t"]
 [ext_resource type="PackedScene" uid="uid://dtjvu7wxx0uyv" path="res://scenes/event_area.tscn" id="2_slnt2"]
+[ext_resource type="Resource" uid="uid://cgqn2dhlhffg0" path="res://Resources/honey_res.tres" id="4_eprto"]
+[ext_resource type="Resource" uid="uid://comfbp8v51c0r" path="res://Resources/gum_res.tres" id="5_1dir0"]
+[ext_resource type="Resource" uid="uid://c70t1iwfuenq7" path="res://Resources/fabric_res.tres" id="6_ru1gb"]
+[ext_resource type="Resource" uid="uid://bhwy0o6skkpm0" path="res://Resources/damage_res.tres" id="7_80wlw"]
+[ext_resource type="Resource" uid="uid://cf5psk0e4gna3" path="res://Resources/patch_res.tres" id="8_51gci"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qdiqf"]
+angle_min = 1.07288e-05
+angle_max = 1.07288e-05
+direction = Vector3(0, 1, 0)
+spread = 25.0
+flatness = 0.25
+initial_velocity_min = 3.0
+initial_velocity_max = 5.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k7bpr"]
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_tt0et"]
+material = SubResource("StandardMaterial3D_k7bpr")
+size = Vector2(0.25, 0.25)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qfu3t"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -28,6 +49,23 @@ size = Vector3(1, 2, 10)
 [node name="World" type="Node3D"]
 script = ExtResource("1_um00t")
 
+[node name="ParticlesToLoad" type="Node3D" parent="."]
+visible = false
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="ParticlesToLoad" groups=["particles"]]
+emitting = false
+amount = 25
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_qdiqf")
+draw_pass_1 = SubResource("QuadMesh_tt0et")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="ParticlesToLoad" groups=["particles"]]
+emitting = false
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_qdiqf")
+draw_pass_1 = SubResource("QuadMesh_tt0et")
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_v346c")
 
@@ -52,29 +90,39 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Honey" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)
-use_timer = false
-event_name = "honey"
+event_data = ExtResource("4_eprto")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Honey" groups=["particles"]]
+emitting = false
+amount = 25
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_qdiqf")
+draw_pass_1 = SubResource("QuadMesh_tt0et")
 
 [node name="Gum" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 4)
-use_timer = false
-event_name = "gum"
+event_data = ExtResource("5_1dir0")
 
 [node name="Fabric" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -4)
-use_timer = false
-event_name = "fabric"
+event_data = ExtResource("6_ru1gb")
+
+[node name="Damage" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -4)
+event_data = ExtResource("7_80wlw")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Damage" groups=["particles"]]
+amount = 25
+process_material = SubResource("ParticleProcessMaterial_qdiqf")
+draw_pass_1 = SubResource("QuadMesh_tt0et")
 
 [node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -4)
-event_name = "patch"
-event_requirements = {
-"fabric_resource": 1,
-"gum_resource": 3,
-"honey_resource": 2
-}
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 0)
+event_data = ExtResource("8_51gci")
 
 [connection signal="completed_interaction" from="ResourceEvents/Honey" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Gum" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Fabric" to="." method="_on_event_completed"]
+[connection signal="completed_interaction" from="ResourceEvents/Damage" to="." method="_on_damage_completed_interaction"]
 [connection signal="completed_interaction" from="ResourceEvents/Patch" to="." method="_on_event_completed"]

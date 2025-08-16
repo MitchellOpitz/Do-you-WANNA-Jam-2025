@@ -18,10 +18,17 @@ texture = ExtResource("1_s6cer")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("SphereShape3D_p8oe2")
 
+[node name="Info" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+billboard = 1
+
 [node name="CompletionTimer" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
 
+[node name="InfoTimer" type="Timer" parent="."]
+
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="body_exited" from="Area3D" to="." method="_on_area_3d_body_exited"]
 [connection signal="timeout" from="CompletionTimer" to="." method="_on_completion_timer_timeout"]
+[connection signal="timeout" from="InfoTimer" to="." method="_on_info_timer_timeout"]

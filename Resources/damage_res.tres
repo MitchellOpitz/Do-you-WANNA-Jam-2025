@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EventResource" load_steps=3 format=3 uid="uid://bhwy0o6skkpm0"]
+
+[ext_resource type="Script" path="res://scripts/EventResource.gd" id="1_ikf84"]
+[ext_resource type="Texture2D" uid="uid://bm8tx30broix4" path="res://Assets/TempDamage.png" id="2_gv6th"]
+
+[resource]
+script = ExtResource("1_ikf84")
+use_timer = true
+max_quantity = 0
+event_name = "damage"
+event_requirements = {
+"patch": 1
+}
+world_sprite = ExtResource("2_gv6th")

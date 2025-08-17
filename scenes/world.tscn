@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://rqpkgkt0ab7m"]
+[gd_scene load_steps=17 format=3 uid="uid://rqpkgkt0ab7m"]
 
 [ext_resource type="PackedScene" uid="uid://b6dxse7cc00s7" path="res://Player/player.tscn" id="1_3xt83"]
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_um00t"]
@@ -6,7 +6,6 @@
 [ext_resource type="Resource" uid="uid://cgqn2dhlhffg0" path="res://Resources/honey_res.tres" id="4_eprto"]
 [ext_resource type="Resource" uid="uid://comfbp8v51c0r" path="res://Resources/gum_res.tres" id="5_1dir0"]
 [ext_resource type="Resource" uid="uid://c70t1iwfuenq7" path="res://Resources/fabric_res.tres" id="6_ru1gb"]
-[ext_resource type="Resource" uid="uid://bhwy0o6skkpm0" path="res://Resources/damage_res.tres" id="7_80wlw"]
 [ext_resource type="Resource" uid="uid://cf5psk0e4gna3" path="res://Resources/patch_res.tres" id="8_51gci"]
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qdiqf"]
@@ -38,7 +37,7 @@ sky = SubResource("Sky_ake08")
 tonemap_mode = 2
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_7is7r"]
-size = Vector2(25, 25)
+size = Vector2(30, 30)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pr81g"]
 albedo_color = Color(0.39, 0.1365, 0, 1)
@@ -108,21 +107,56 @@ event_data = ExtResource("5_1dir0")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, -4)
 event_data = ExtResource("6_ru1gb")
 
-[node name="Damage" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, -4)
-event_data = ExtResource("7_80wlw")
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="ResourceEvents/Damage" groups=["particles"]]
-amount = 25
-process_material = SubResource("ParticleProcessMaterial_qdiqf")
-draw_pass_1 = SubResource("QuadMesh_tt0et")
-
 [node name="Patch" parent="ResourceEvents" instance=ExtResource("2_slnt2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1, 0)
 event_data = ExtResource("8_51gci")
 
+[node name="TravelTimer" type="Timer" parent="."]
+wait_time = 180.0
+one_shot = true
+autostart = true
+
+[node name="Label" type="Label" parent="TravelTimer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 25
+
+[node name="DamageTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Damages" type="Node3D" parent="."]
+
+[node name="EndScreen" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Background" type="ColorRect" parent="EndScreen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0.235294, 1)
+
+[node name="Label" type="Label" parent="EndScreen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "temp"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="completed_interaction" from="ResourceEvents/Honey" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Gum" to="." method="_on_event_completed"]
 [connection signal="completed_interaction" from="ResourceEvents/Fabric" to="." method="_on_event_completed"]
-[connection signal="completed_interaction" from="ResourceEvents/Damage" to="." method="_on_damage_completed_interaction"]
 [connection signal="completed_interaction" from="ResourceEvents/Patch" to="." method="_on_event_completed"]
+[connection signal="timeout" from="TravelTimer" to="." method="_on_travel_timer_timeout"]
+[connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]

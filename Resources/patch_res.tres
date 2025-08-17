@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("2_mmfbg")
 use_timer = true
-max_quantity = 2
+max_quantity = 3
 event_name = "patch"
 event_requirements = {
 "fabric": 1,

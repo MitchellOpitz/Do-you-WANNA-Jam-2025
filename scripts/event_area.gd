@@ -91,7 +91,6 @@ func check_requirements(required_items : Dictionary, items_given : Dictionary) -
 			$InfoTimer.start()
 			return false
 	return true
-	
 
 
 func _on_info_timer_timeout() -> void:

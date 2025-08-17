@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EventResource" load_steps=4 format=3 uid="uid://cf5psk0e4gna3"]
+
+[ext_resource type="Texture2D" uid="uid://tuflototupm6" path="res://Assets/TempInventory.png" id="1_rgdfs"]
+[ext_resource type="Script" path="res://scripts/EventResource.gd" id="2_mmfbg"]
+[ext_resource type="Texture2D" uid="uid://b21faga74gxsr" path="res://Assets/TempBox.png" id="3_bp03s"]
+
+[resource]
+script = ExtResource("2_mmfbg")
+use_timer = true
+max_quantity = 2
+event_name = "patch"
+event_requirements = {
+"fabric": 1,
+"gum": 3,
+"honey": 2
+}
+world_sprite = ExtResource("3_bp03s")
+inventory_sprite = ExtResource("1_rgdfs")

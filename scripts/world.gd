@@ -1,5 +1,20 @@
 extends Node3D
 
+const EVENT_AREA = preload("res://scenes/event_area.tscn")
+const DAMAGE_PARTICLES = preload("res://Resources/damage_particles.tscn")
+const DAMAGE_RES = preload("res://Resources/damage_res.tres")
+
+@onready var rng = RandomNumberGenerator.new()
+@onready var damage_timer: Timer = $DamageTimer
+@onready var damages: Node3D = $Damages
+@onready var countdown: Label = $TravelTimer/Label
+@onready var travel_timer: Timer = $TravelTimer
+
+
+var damage_spawn_x = Vector2(-15, 15)
+var damage_spawn_y = 1
+var damage_spawn_z = Vector2(-15, 15)
+
 func _ready() -> void:
 	test_events()
 	# Load particles and then kill em.
@@ -8,6 +23,18 @@ func _ready() -> void:
 
 	# It's important to copy any particle created to this node to properly take advantage of loading.
 	$ParticlesToLoad.queue_free()
+
+
+func _process(_delta: float) -> void:
+	countdown.text = str(round(travel_timer.time_left))
+	if damage_timer.is_stopped():
+		damage_timer.wait_time = rng.randi_range(10, 30)
+		damage_timer.start()
+	if damages.get_child_count() >= 5:
+		# Super temporary game over screen.
+		$EndScreen/Label.text = "You lose! Too much damage!"
+		$EndScreen.show()
+		get_tree().paused = true
 
 
 func _on_event_completed(event_data : EventResource, _node_reference : EventArea) -> void:
@@ -40,3 +67,27 @@ func test_events():
 					for key in c.event_data.event_requirements.keys():
 						if c.event_data.event_requirements[key] == 0:
 							push_warning(str(c.get_path()) + " " + key + " requires 0. Double check this.")
+
+
+func _on_travel_timer_timeout() -> void:
+	# super temporary game over screen.
+	$EndScreen/Label.text = "You win! Yo ho ho!"
+	$EndScreen.show()
+	get_tree().paused = true
+
+
+func _on_damage_timer_timeout() -> void:
+	# Where we spawn new damage
+	var new_damage = EVENT_AREA.instantiate()
+	new_damage.event_data = DAMAGE_RES
+	new_damage.completed_interaction.connect(_on_damage_completed_interaction)
+	var new_particles = DAMAGE_PARTICLES.instantiate()
+	new_damage.add_child(new_particles)
+	
+	#pick random position
+	var rand_position = Vector3()
+	rand_position.x = rng.randf_range(damage_spawn_x.x, damage_spawn_x.y)
+	rand_position.y = damage_spawn_y
+	rand_position.z = rng.randf_range(damage_spawn_z.x, damage_spawn_z.y)
+	$Damages.add_child(new_damage)
+	new_damage.global_position = rand_position
